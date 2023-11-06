@@ -1,0 +1,58 @@
+name: execute script
+
+description: build job
+
+inputs:
+  machine:
+    description: If set to other value, the job need ssh
+    required: true
+    default: "local"
+  all_coverage:
+    description: If this value is set to ON, all coverage testing will begin
+    required: true
+    default: OFF
+  build-env:
+    description: Set up the build environment
+    required: true
+    default: ""
+  build_type:
+    description: Set the parameters passed in by the build
+    required: true
+    default: ""
+  job_name:
+    description: Set task name
+    required: true
+    default: ""
+  partition:
+    description: Set cluster partition
+    required: true
+    default: ""
+  clear_all:
+    description: After the construction is completed, decide whether to clean up
+    required: true
+    default: "true"
+
+runs:
+  using: composite
+  steps:
+    - name : test
+      env:
+        DEEPLINK_PATH: '/mnt/cache/share/deeplinkci/github/${{ github.repository }}'
+        JOB_NAME: ${inputs.job_name}
+      shell: bash
+      run: |
+        if [ ${inputs.clear_all} == "true" ];then
+        cleaner="|| ( cd ${DEEPLINK_PATH}/${GITHUB_RUN_NUMBER}/ && rm -rf ${JOB_NAME} && exit 1 )"
+        else
+        cleaner="
+        fi
+        ssh ${inputs.machine} """
+        set -e
+        export USE_COVERAGE=ON
+        export CI=true
+        source ${inputs.build-env}
+        cd ${DEEPLINK_PATH}/${GITHUB_RUN_NUMBER} && rm -rf ${JOB_NAME}  && cp -R source ${JOB_NAME} && cd ${JOB_NAME}
+        srun --job-name=${JOB_NAME} --partition=${inputs.partition} --time=10 bash -c 'cd impl && bash scripts/build_impl.sh ${inputs.build_type} ' \
+        || ( cd ${DEEPLINK_PATH}/${GITHUB_RUN_NUMBER}/ && rm -rf ${JOB_NAME} && exit 1 )
+        """
+
