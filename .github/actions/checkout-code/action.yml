@@ -40,7 +40,7 @@ runs:
         echo "${GITHUB_RUN_ID}" "${RUNNER_NAME}"
         echo ${DEEPLINK_PATH}
         env
-        if [ ${MACHINE} != "local111" ];then
+        if [ ${MACHINE} != "local" ];then
           ssh ${MACHINE}  "$(typeset -f checkout_code); checkout_code "
         else
           checkout_code
