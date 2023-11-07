@@ -22,7 +22,7 @@ runs:
       run: |
         function checkout_code(){
 
-          echo"""
+          echo """
           git clone ${{ github.event.pull_request.head.repo.ssh_url }} source
           cd source && git checkout ${{ github.event.pull_request.head.sha }}
           git remote add mainrepo git@github.com:"${GITHUB_REPOSITORY}".git
