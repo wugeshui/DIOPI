@@ -17,6 +17,8 @@ runs:
       shell: bash
       run: |
         function checkout_code(){
+          env
+          echo "mkdir -p ${DEEPLINK_PATH}/${GITHUB_RUN_NUMBER} && cd ${DEEPLINK_PATH}/${GITHUB_RUN_NUMBER} && rm -rf source"
           mkdir -p ${DEEPLINK_PATH}/${GITHUB_RUN_NUMBER} && cd ${DEEPLINK_PATH}/${GITHUB_RUN_NUMBER} && rm -rf source
           if [ -n "${{ github.event.pull_request.head.repo.full_name }}" ] && [[ ! "${{ github.event.pull_request.head.repo.full_name }}" == *DeepLink-org* ]]; then
             git clone ${{ github.event.pull_request.head.repo.ssh_url }} source
