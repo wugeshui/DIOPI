@@ -31,7 +31,7 @@ jobs:
         uses: wugeshui/DIOPI/.github/actions/checkout-code@main
         with:
           machine: "SH1988"
-          deeplink_path: $DEEPLINK_PATH
+          working_path: "${DEEPLINK_PATH}/${GITHUB_RUN_NUMBER}"
 
       - name: Set output variables
         id: set-run-vars
