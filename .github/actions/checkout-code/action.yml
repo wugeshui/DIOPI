@@ -7,17 +7,12 @@ inputs:
     description: If set to other value, the job need ssh
     required: false
     default: 'local'
-  deeplink_path:
-    description: ci work home
-    required: true
-    default: ''
 
 runs:
   using: composite
   steps:
     - name : checkout
       env:
-        DEEPLINK_PATH: ${{ inputs.deeplink_path }}
         MACHINE: ${{ inputs.machine }}
       shell: bash
       run: |
@@ -39,6 +34,7 @@ runs:
           git submodule update --init --recursive
         }
         if [ ${MACHINE} != "local" ];then
+          echo "$MACHINE"
           ssh ${MACHINE}  checkout
         else
           checkout
