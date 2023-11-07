@@ -38,7 +38,7 @@ runs:
           fi
           git submodule update --init --recursive """
         }
-        if [ ${MACHINE} != "local" ];then
+        if [ ${MACHINE} != "local1" ];then
           ssh ${MACHINE}  "$(typeset -f checkout_code); checkout_code "
         else
           checkout_code
