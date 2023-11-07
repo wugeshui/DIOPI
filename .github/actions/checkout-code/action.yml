@@ -41,7 +41,7 @@ runs:
         echo ${DEEPLINK_PATH}
         env
         if [ ${MACHINE} != "local" ];then
-          ssh ${MACHINE}  "$(typeset -f checkout_code); checkout_code "
+          ssh ${MACHINE}  bash -l -c "$(typeset -f checkout_code); checkout_code "
         else
           checkout_code
         fi
