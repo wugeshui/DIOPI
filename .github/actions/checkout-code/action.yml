@@ -18,6 +18,7 @@ runs:
     - name : checkout
       env:
         DEEPLINK_PATH: ${{ inputs.deeplink_path }}
+        MACHINE: ${{ inputs.machine }}
       shell: bash
       run: |
         function checkout(){
@@ -37,8 +38,8 @@ runs:
           fi
           git submodule update --init --recursive
         }
-        if [ ${inputs.machine} != "local" ];then
-          ssh ${inputs.machine}  checkout
+        if [ ${MACHINE} != "local" ];then
+          ssh ${MACHINE}  checkout
         else
           checkout
         fi
