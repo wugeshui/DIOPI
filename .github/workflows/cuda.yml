@@ -28,7 +28,7 @@ jobs:
       output: ${{ steps.set-run-vars.outputs.RUN_RESULT }}
     steps:
       - name: Checkout Code
-        uses: ./.github/actions/checkout-code@main
+        uses: wugeshui/DIOPI/.github/actions/checkout-code@main
         with:
           machine: "SH1988"
           deeplink_path: $DEEPLINK_PATH
