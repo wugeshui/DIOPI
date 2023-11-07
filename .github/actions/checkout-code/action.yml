@@ -21,13 +21,6 @@ runs:
       shell: bash
       run: |
         function checkout_code(){
-
-          echo """
-          git clone ${{ github.event.pull_request.head.repo.ssh_url }} source
-          cd source && git checkout ${{ github.event.pull_request.head.sha }}
-          git remote add mainrepo git@github.com:"${GITHUB_REPOSITORY}".git
-          git fetch  mainrepo && git merge --no-edit mainrepo/${{ github.base_ref }}
-          """
           echo """
           mkdir -p "${DEEPLINK_PATH}/${GITHUB_RUN_NUMBER}" && cd "${DEEPLINK_PATH}/${GITHUB_RUN_NUMBER}" && rm -rf source
           if [ -n "${{ github.event.pull_request.head.repo.full_name }}" ] && [[ ! "${{ github.event.pull_request.head.repo.full_name }}" == *DeepLink-org* ]]; then
@@ -46,7 +39,7 @@ runs:
           git submodule update --init --recursive """
         }
         if [ ${MACHINE} != "local" ];then
-          ssh ${MACHINE}  "$(typeset -f); checkout_code "
+          ssh ${MACHINE}  "$(typeset -f checkout_code); checkout_code "
         else
           checkout_code
         fi
