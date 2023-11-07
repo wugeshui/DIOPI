@@ -1,22 +1,27 @@
 name: Checkout Code
 
-description: checkout out code
+description: checkout code
 
 inputs:
   machine:
     description: If set to other value, the job need ssh
     required: false
     default: 'local'
-
+  deeplink_path:
+    description: ci work home
+    required: true
+    default: ''
 
 runs:
   using: composite
   steps:
     - name : checkout
+      env:
+        DEEPLINK_PATH: ${{ inputs.deeplink_path }}
       shell: bash
       run: |
         function checkout(){
-          cd ${DEEPLINK_PATH}/${GITHUB_RUN_NUMBER} && rm -rf source
+          mkdir -p ${DEEPLINK_PATH}/${GITHUB_RUN_NUMBER} && cd ${DEEPLINK_PATH}/${GITHUB_RUN_NUMBER} && rm -rf source
           if [ -n "${{ github.event.pull_request.head.repo.full_name }}" ] && [[ ! "${{ github.event.pull_request.head.repo.full_name }}" == *DeepLink-org* ]]; then
             git clone ${{ github.event.pull_request.head.repo.ssh_url }} source
             cd source && git checkout ${{ github.event.pull_request.head.sha }}
@@ -33,7 +38,7 @@ runs:
           git submodule update --init --recursive
         }
         if [ ${inputs.machine} != "local" ];then
-          ssh ${inputs.machine} " checkout "
+          ssh ${inputs.machine}  checkout
         else
           checkout
         fi

@@ -1,16 +1,16 @@
 name: diopi ci
 on:
   workflow_dispatch:
-  push:
-    branches:
-      - main
-      - dev_v0.25
-  pull_request:
-    paths-ignore:
-      - "**.md"
-      - ".github/ISSUE_TEMPLATE/**"
-      - ".git*"
-      - "CODE_OF_CONDUCT**"
+#  push:
+#    branches:
+#      - main
+#      - dev_v0.25
+#  pull_request:
+#    paths-ignore:
+#      - "**.md"
+#      - ".github/ISSUE_TEMPLATE/**"
+#      - ".git*"
+#      - "CODE_OF_CONDUCT**"
 
 env:
   NFS_PATH: '/mnt/cache/share/parrotsci/github/cibuild/${{ github.repository }}'
