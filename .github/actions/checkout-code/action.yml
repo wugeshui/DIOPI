@@ -21,7 +21,6 @@ runs:
       shell: bash
       run: |
         function checkout_code(){
-          echo '''
           mkdir -p "${DEEPLINK_PATH}/${GITHUB_RUN_NUMBER}" && cd "${DEEPLINK_PATH}/${GITHUB_RUN_NUMBER}" && rm -rf source
           if [ -n "${{ github.event.pull_request.head.repo.full_name }}" ] && [[ ! "${{ github.event.pull_request.head.repo.full_name }}" == *DeepLink-org* ]]; then
             git clone ${{ github.event.pull_request.head.repo.ssh_url }} source
@@ -36,7 +35,7 @@ runs:
               git checkout ${{ github.sha }}
             fi
           fi
-          git submodule update --init --recursive '''
+          git submodule update --init --recursive
         }
         echo "${GITHUB_RUN_ID}" "${RUNNER_NAME}"
         echo ${DEEPLINK_PATH}
