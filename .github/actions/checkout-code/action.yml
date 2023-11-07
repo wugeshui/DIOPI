@@ -9,8 +9,8 @@ inputs:
     default: 'local'
   working_path:
     description: ci work home
-    required: true
-    default: ''
+    required: false
+    default: '/mnt/cache/share/deeplinkci/github/${{ github.repository }}/${{ github.run_number }}'
 
 runs:
   using: composite
