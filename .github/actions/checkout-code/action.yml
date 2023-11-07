@@ -22,7 +22,7 @@ runs:
       run: |
         function checkout_code(){
           echo '${GITHUB_EVENT_NAME}'
-          echo "${DEEPLINK_PATH}/${GITHUB_RUN_NUMBER}"
+          env
           mkdir -p "${DEEPLINK_PATH}/${GITHUB_RUN_NUMBER}" && cd "${DEEPLINK_PATH}/${GITHUB_RUN_NUMBER}" && rm -rf source
           if [ -n "${{ github.event.pull_request.head.repo.full_name }}" ] && [[ ! "${{ github.event.pull_request.head.repo.full_name }}" == *DeepLink-org* ]]; then
             git clone ${{ github.event.pull_request.head.repo.ssh_url }} source
@@ -42,9 +42,8 @@ runs:
         echo "${GITHUB_RUN_ID}" "${RUNNER_NAME}"
         echo ${DEEPLINK_PATH}
         env
-        if [ ${MACHINE} != "local" ];then
+        if [ ${MACHINE} != "local111" ];then
           ssh ${MACHINE}  "$(typeset -f checkout_code); checkout_code "
         else
-
           checkout_code
         fi
