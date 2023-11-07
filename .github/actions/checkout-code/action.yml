@@ -35,7 +35,7 @@ runs:
         }
         if [ ${MACHINE} != "local" ];then
           echo "$MACHINE"
-          ssh ${MACHINE}  " env && checkout "
+          ssh ${MACHINE}  checkout
         else
           checkout
         fi
