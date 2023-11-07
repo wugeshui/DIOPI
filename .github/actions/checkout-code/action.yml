@@ -18,7 +18,7 @@ runs:
     - name : checkout
       env:
         MACHINE: ${{ inputs.machine }}
-      shell: bash
+      shell: bash -l -c
       run: |
         function checkout_code(){
           mkdir -p ${{ inputs.working_path }} && cd ${{ inputs.working_path }} && rm -rf source
@@ -38,7 +38,7 @@ runs:
           git submodule update --init --recursive
         }
         if [ ${MACHINE} != "local" ];then
-          ssh ${MACHINE} " bash -l -c '$(typeset -f checkout_code); checkout_code' "
+          ssh ${MACHINE} " $(typeset -f checkout_code); checkout_code "
         else
           checkout_code
         fi
