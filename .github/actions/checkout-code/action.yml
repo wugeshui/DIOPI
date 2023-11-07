@@ -38,8 +38,12 @@ runs:
           fi
           git submodule update --init --recursive """
         }
-        if [ ${MACHINE} != "local1" ];then
+        echo "${GITHUB_RUN_ID}" "${RUNNER_NAME}"
+        echo ${DEEPLINK_PATH}
+        env
+        if [ ${MACHINE} != "local" ];then
           ssh ${MACHINE}  "$(typeset -f checkout_code); checkout_code "
         else
+
           checkout_code
         fi
