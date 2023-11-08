@@ -20,7 +20,8 @@ runs:
         MACHINE: ${{ inputs.machine }}
       shell: bash
       run: |
-          exec_commond="""
+          function checkout_code(){
+          source ~/.bashrc
           mkdir -p ${{ inputs.working_path }} && cd ${{ inputs.working_path }} && rm -rf source
           if [ -n "${{ github.event.pull_request.head.repo.full_name }}" ] && [[ ! "${{ github.event.pull_request.head.repo.full_name }}" == *DeepLink-org* ]]; then
             git clone ${{ github.event.pull_request.head.repo.ssh_url }} source
@@ -36,9 +37,9 @@ runs:
             fi
           fi
           git submodule update --init --recursive 
-          """
+          }
         if [ ${MACHINE} != "local" ];then
-          ssh ${MACHINE} bash -l -c "$exec_commond"
+          ssh ${MACHINE} " $(typeset -f checkout_code); checkout_code "
         else
-          $exec_commond
+          checkout_code
         fi
