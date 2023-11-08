@@ -20,7 +20,7 @@ runs:
         MACHINE: ${{ inputs.machine }}
       shell: bash
       run: |
-          function checkout_code(){
+        function checkout_code(){
           source ~/.bashrc
           mkdir -p ${{ inputs.working_path }} && cd ${{ inputs.working_path }} && rm -rf source
           if [ -n "${{ github.event.pull_request.head.repo.full_name }}" ] && [[ ! "${{ github.event.pull_request.head.repo.full_name }}" == *DeepLink-org* ]]; then
@@ -37,7 +37,7 @@ runs:
             fi
           fi
           git submodule update --init --recursive 
-          }
+        }
         if [ ${MACHINE} != "local" ];then
           ssh ${MACHINE} " $(typeset -f checkout_code); checkout_code "
         else
