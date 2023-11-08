@@ -1,6 +1,6 @@
 name: execute script
 
-description: build job
+description: build and test job
 
 inputs:
   machine:
@@ -35,7 +35,7 @@ inputs:
 runs:
   using: composite
   steps:
-    - name : build
+    - name : build and test
       env:
         JOB_NAME: ${inputs.job_name}
         MACHINE: ${{ inputs.machine }}
