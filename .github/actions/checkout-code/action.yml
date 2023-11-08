@@ -18,7 +18,7 @@ runs:
     - name : checkout
       env:
         MACHINE: ${{ inputs.machine }}
-      shell: bash -i -s -m {0}
+      shell: bash --rcfile ~/.bashrc
       run: |
         function checkout_code(){
          env
