@@ -7,16 +7,12 @@ inputs:
     description: If set to other value, the job need ssh
     required: true
     default: "local"
-  all_coverage:
-    description: If this value is set to ON, all coverage testing will begin
-    required: true
-    default: OFF
   build-env:
     description: Set up the build environment
     required: true
     default: ""
-  build_type:
-    description: Set the parameters passed in by the build
+  build_shell:
+    description: Set the build shell passed in by the build
     required: true
     default: ""
   job_name:
@@ -27,32 +23,49 @@ inputs:
     description: Set cluster partition
     required: true
     default: ""
-  clear_all:
-    description: After the construction is completed, decide whether to clean up
+  cleaner:
+    description: After the construction is completed, decide whether to clean up (e: all,data,error_all,error_data)
     required: true
-    default: "true"
+    default: "none"
+  working_path:
+    description: ci work home
+    required: false
+    default: '/mnt/cache/share/deeplinkci/github/${{ github.repository }}/${{ github.run_number }}'
+
 
 runs:
   using: composite
   steps:
-    - name : test
+    - name : build
       env:
-        DEEPLINK_PATH: '/mnt/cache/share/deeplinkci/github/${{ github.repository }}'
         JOB_NAME: ${inputs.job_name}
+        MACHINE: ${{ inputs.machine }}
+        GEN_DATA: "diopi_test/python/cache"
       shell: bash
       run: |
-        if [ ${inputs.clear_all} == "true" ];then
-        cleaner="|| ( cd ${DEEPLINK_PATH}/${GITHUB_RUN_NUMBER}/ && rm -rf ${JOB_NAME} && exit 1 )"
-        else
-        cleaner="
-        fi
-        ssh ${inputs.machine} """
-        set -e
-        export USE_COVERAGE=ON
-        export CI=true
-        source ${inputs.build-env}
-        cd ${DEEPLINK_PATH}/${GITHUB_RUN_NUMBER} && rm -rf ${JOB_NAME}  && cp -R source ${JOB_NAME} && cd ${JOB_NAME}
-        srun --job-name=${JOB_NAME} --partition=${inputs.partition} --time=10 bash -c 'cd impl && bash scripts/build_impl.sh ${inputs.build_type} ' \
-        || ( cd ${DEEPLINK_PATH}/${GITHUB_RUN_NUMBER}/ && rm -rf ${JOB_NAME} && exit 1 )
-        """
+        function build_code(){
+          source ~/.bashrc
+          if [ ${inputs.cleaner} == "error_all" ];then
+          cleaner="|| ( cd ${DEEPLINK_PATH}/${GITHUB_RUN_NUMBER}/ && rm -rf ${JOB_NAME} && exit 1 )"
+          if [ ${inputs.cleaner} == "error_data" ];then
+          cleaner="|| ( cd ${DEEPLINK_PATH}/${GITHUB_RUN_NUMBER}/${JOB_NAME} && git clean -xdf ${GEN_DATA} && exit 1 )"
+          elif [ ${inputs.cleaner} == "data" ];then
+          cleaner="&& cd ${DEEPLINK_PATH}/${GITHUB_RUN_NUMBER}/${JOB_NAME} && git clean -xdf ${GEN_DATA} || ( cd ${DEEPLINK_PATH}/${GITHUB_RUN_NUMBER}/${JOB_NAME} && git clean -xdf ${GEN_DATA} && exit 1 )"
+          else
+          cleaner="&& cd ${DEEPLINK_PATH}/${GITHUB_RUN_NUMBER}/ && rm -rf ${JOB_NAME} || ( cd ${DEEPLINK_PATH}/${GITHUB_RUN_NUMBER}/ && rm -rf ${JOB_NAME} && exit 1 )"
+          fi
+          if [ ${MACHINE} != "local" ];then
+          ssh ${MACHINE} """
+          set -e
+          export CI=true
+          source ${inputs.build-env}
+          cd ${DEEPLINK_PATH}/${GITHUB_RUN_NUMBER} && rm -rf ${JOB_NAME}  && cp -R source ${JOB_NAME} && cd ${JOB_NAME}
+          srun --job-name=${JOB_NAME} --partition=${inputs.partition} --time=10 bash -c '${build_shell}' ${cleaner}          
+          """
+          else
+          export CI=true
+          cd ${DEEPLINK_PATH}/${GITHUB_RUN_NUMBER} && rm -rf ${JOB_NAME}  && cp -R source ${JOB_NAME} && cd ${JOB_NAME}
+          ${build_shell} ${cleaner} 
+          fi
+        }
 
