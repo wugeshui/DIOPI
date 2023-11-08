@@ -20,7 +20,6 @@ runs:
         MACHINE: ${{ inputs.machine }}
       shell: bash
       run: |
-
           exec_commond="""
           mkdir -p ${{ inputs.working_path }} && cd ${{ inputs.working_path }} && rm -rf source
           if [ -n "${{ github.event.pull_request.head.repo.full_name }}" ] && [[ ! "${{ github.event.pull_request.head.repo.full_name }}" == *DeepLink-org* ]]; then
@@ -36,9 +35,10 @@ runs:
               git checkout ${{ github.sha }}
             fi
           fi
-          git submodule update --init --recursive """
+          git submodule update --init --recursive 
+          """
         if [ ${MACHINE} != "local" ];then
-          ssh ${MACHINE} bash -l -c " $exec_commond "
+          ssh ${MACHINE} bash -l -c "$exec_commond"
         else
           $exec_commond
         fi
