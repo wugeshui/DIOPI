@@ -18,7 +18,7 @@ runs:
     - name : checkout
       env:
         MACHINE: ${{ inputs.machine }}
-      shell: bash -l -c {0}
+      shell: bash -l {0}
       run: |
         function checkout_code(){
           mkdir -p ${{ inputs.working_path }} && cd ${{ inputs.working_path }} && rm -rf source
