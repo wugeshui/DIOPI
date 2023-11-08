@@ -1,0 +1,14 @@
+name: code coverage
+
+description: code coverage
+
+inputs:
+  machine:
+    description: If set to other value, the job need ssh
+    required: false
+    default: 'local'
+  working_path:
+    description: ci work home
+    required: false
+    default: '/mnt/cache/share/deeplinkci/github/${{ github.repository }}/${{ github.run_number }}'
+  
