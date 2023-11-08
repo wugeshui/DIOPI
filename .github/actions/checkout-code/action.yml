@@ -18,7 +18,7 @@ runs:
     - name : checkout
       env:
         MACHINE: ${{ inputs.machine }}
-      shell: bash -l -c {0}
+      shell: bash
       run: |
         # function checkout_code(){
         #  env
@@ -40,7 +40,7 @@ runs:
           git submodule update --init --recursive """
         # }
         if [ ${MACHINE} != "local" ];then
-          ssh ${MACHINE} " $exec_commond"
+          ssh ${MACHINE} bash -l -c " $exec_commond"
         else
           $exec_commond
         fi
