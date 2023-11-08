@@ -42,29 +42,27 @@ runs:
         GEN_DATA: "diopi_test/python/cache"
       shell: bash
       run: |
-        function build_code(){
-          source ~/.bashrc
-          if [ ${inputs.cleaner} == "error_all" ];then
+        if [ ${inputs.cleaner} == "error_all" ];then
           cleaner="|| ( cd ${{ inputs.working_path }} && rm -rf ${JOB_NAME} && exit 1 )"
-          if [ ${inputs.cleaner} == "error_data" ];then
+        if [ ${inputs.cleaner} == "error_data" ];then
           cleaner="|| ( cd ${{ inputs.working_path }}/${JOB_NAME} && git clean -xdf ${GEN_DATA} && exit 1 )"
-          elif [ ${inputs.cleaner} == "data" ];then
+        elif [ ${inputs.cleaner} == "data" ];then
           cleaner="&& cd ${{ inputs.working_path }/${JOB_NAME} && git clean -xdf ${GEN_DATA} || ( cd ${DEEPLINK_PATH}/${GITHUB_RUN_NUMBER}/${JOB_NAME} && git clean -xdf ${GEN_DATA} && exit 1 )"
-          else
+        else
           cleaner="&& cd ${{ inputs.working_path }} && rm -rf ${JOB_NAME} || ( cd ${DEEPLINK_PATH}/${GITHUB_RUN_NUMBER}/ && rm -rf ${JOB_NAME} && exit 1 )"
-          fi
-          if [ ${MACHINE} != "local" ];then
+        fi
+        if [ ${MACHINE} != "local" ];then
           ssh ${MACHINE} """
-          set -e
-          export CI=true
-          source ${inputs.build-env}
-          cd ${{ inputs.working_path }} && rm -rf ${JOB_NAME}  && cp -R source ${JOB_NAME} && cd ${JOB_NAME}
-          srun --job-name=${JOB_NAME} --partition=${inputs.partition} --time=10 bash -c '${build_shell}' ${cleaner}          
+            set -e
+            source ~/.bashrc
+            export CI=true
+            source ${inputs.build-env}
+            cd ${{ inputs.working_path }} && rm -rf ${JOB_NAME}  && cp -R source ${JOB_NAME} && cd ${JOB_NAME}
+            srun --job-name=${JOB_NAME} --partition=${inputs.partition} --time=10 bash -c '${build_shell}' ${cleaner}          
           """
-          else
+        else
           export CI=true
+          source ~/.bashrc
           cd ${{ inputs.working_path }} && rm -rf ${JOB_NAME}  && cp -R source ${JOB_NAME} && cd ${JOB_NAME}
           ${build_shell} ${cleaner} 
-          fi
-        }
-
+        fi
