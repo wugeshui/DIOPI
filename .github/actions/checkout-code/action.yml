@@ -22,7 +22,6 @@ runs:
       run: |
         function checkout_code(){
           source ~/.bashrc
-          echo "${{ toJson(github) }}"
           mkdir -p ${{ inputs.working_path }} && cd ${{ inputs.working_path }} && rm -rf source
           if [ -n "${{ github.event.pull_request.head.repo.full_name }}" ] && [[ ! "${{ github.event.pull_request.head.repo.full_name }}" == *DeepLink-org* ]]; then
             git clone ${{ github.event.pull_request.head.repo.clone_url }} source
