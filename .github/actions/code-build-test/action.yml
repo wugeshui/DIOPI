@@ -62,8 +62,9 @@ runs:
             source ~/.bashrc
             export CI=true
             source ${{ inputs.build-env }} && cd ${{ inputs.working_path }}
-            if [  ]
-            rm -rf ${JOB_NAME}  && cp -R source ${JOB_NAME}
+            if [ ${{ inputs.copy_job == "true" }} ];then
+              rm -rf ${JOB_NAME}  && cp -R source ${JOB_NAME}
+            fi
             cd ${JOB_NAME}
             srun --job-name=${JOB_NAME} --partition=${{ inputs.partition }} --time=10 bash -c '${{ inputs.build_shell }}' ${cleaner_shell}
           """
