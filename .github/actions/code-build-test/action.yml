@@ -7,7 +7,7 @@ inputs:
     description: If set to other value, the job need ssh
     required: true
     default: "local"
-  build-env:
+  build_env:
     description: Set up the build environment
     required: true
     default: ""
@@ -29,8 +29,8 @@ inputs:
     default: ""
   copy_job:
     description: False to use old job, true to delete and recopy first
-    required: true
-    default: ""
+    required: false
+    default: "true"
   working_path:
     description: ci work home
     required: false
@@ -61,7 +61,7 @@ runs:
             set -e
             source ~/.bashrc
             export CI=true
-            source ${{ inputs.build-env }} && cd ${{ inputs.working_path }}
+            source ${{ inputs.build_env }} && cd ${{ inputs.working_path }}
             if [ ${{ inputs.copy_job == "true" }} ];then
               rm -rf ${JOB_NAME}  && cp -R source ${JOB_NAME}
             fi
