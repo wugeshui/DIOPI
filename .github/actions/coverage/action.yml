@@ -7,8 +7,46 @@ inputs:
     description: If set to other value, the job need ssh
     required: false
     default: 'local'
+  build-env:
+    description: Set up the build environment
+    required: true
+    default: ""
   working_path:
     description: ci work home
     required: false
     default: '/mnt/cache/share/deeplinkci/github/${{ github.repository }}/${{ github.run_number }}'
-  
+  coverage_type:
+    description: coverage type( all only_incre)
+    required: false
+    default: "only_incre"
+  require_coverage:
+    description: input coverage rate
+    required: false
+    default: "0"
+
+runs:
+  using: composite
+  steps:
+    - name : checkout
+      env:
+        JOB_NAME: ${inputs.job_name}
+        MACHINE: ${{ inputs.machine }}
+        REQUIRE_COVERAGE: ${{ inputs.require_coverage }}
+      shell: bash
+      run: |
+        function coverage(){
+          set -e
+          source ~/.bashrc
+          if [ ${inputs.coverage_type} == "only_incre" ];then
+            source ${inputs.build-env}
+            cd ${{ inputs.working_path }}/${JOB_NAME}
+            bash scripts/increment_coverage.sh ${REQUIRE_COVERAGE}
+          else
+            bash /mnt/cache/share/platform/dep/sonar/coverage_DIOPI_camb.sh ${{ inputs.working_path }}/${JOB_NAME} ${{ github.run_number }} "ON" || echo "get coverage fail"
+          fi
+        }
+        if [ ${MACHINE} != "local" ];then
+          ssh ${MACHINE} " $(typeset -f coverage); coverage "
+        else
+          coverage
+        fi

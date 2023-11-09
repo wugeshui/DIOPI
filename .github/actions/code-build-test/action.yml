@@ -24,9 +24,9 @@ inputs:
     required: true
     default: ""
   cleaner:
-    description: After the construction is completed, decide whether to clean up (e: all,data,error_all,error_data)
-    required: true
-    default: "none"
+    description: After the construction is completed, decide whether to clean up (all,data,error_all,error_data)
+    required: false
+    default: ""
   working_path:
     description: ci work home
     required: false
