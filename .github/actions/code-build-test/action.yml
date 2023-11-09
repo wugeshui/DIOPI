@@ -45,7 +45,7 @@ runs:
       run: |
         if [ ${CLEANER} == "error_all" ];then
           cleaner="|| ( cd ${{ inputs.working_path }} && rm -rf ${JOB_NAME} && exit 1 )"
-        if [ ${CLEANER} == "error_data" ];then
+        elif [ ${CLEANER} == "error_data" ];then
           cleaner="|| ( cd ${{ inputs.working_path }}/${JOB_NAME} && git clean -xdf ${GEN_DATA} && exit 1 )"
         elif [ ${CLEANER} == "data" ];then
           cleaner="&& cd ${{ inputs.working_path }}/${JOB_NAME} && git clean -xdf ${GEN_DATA} || ( cd ${{ inputs.working_path }}/${JOB_NAME} && git clean -xdf ${GEN_DATA} && exit 1 )"
