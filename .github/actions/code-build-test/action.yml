@@ -44,13 +44,13 @@ runs:
       shell: bash
       run: |
         if [ ${CLEANER} == "error_all" ];then
-          cleaner="|| ( cd ${{ inputs.working_path }} && rm -rf ${JOB_NAME} && exit 1 )"
+          cleaner_shell="|| ( cd ${{ inputs.working_path }} && rm -rf ${JOB_NAME} && exit 1 )"
         elif [ ${CLEANER} == "error_data" ];then
-          cleaner="|| ( cd ${{ inputs.working_path }}/${JOB_NAME} && git clean -xdf ${GEN_DATA} && exit 1 )"
+          cleaner_shell="|| ( cd ${{ inputs.working_path }}/${JOB_NAME} && git clean -xdf ${GEN_DATA} && exit 1 )"
         elif [ ${CLEANER} == "data" ];then
-          cleaner="&& cd ${{ inputs.working_path }}/${JOB_NAME} && git clean -xdf ${GEN_DATA} || ( cd ${{ inputs.working_path }}/${JOB_NAME} && git clean -xdf ${GEN_DATA} && exit 1 )"
+          cleaner_shell="&& cd ${{ inputs.working_path }}/${JOB_NAME} && git clean -xdf ${GEN_DATA} || ( cd ${{ inputs.working_path }}/${JOB_NAME} && git clean -xdf ${GEN_DATA} && exit 1 )"
         else
-          cleaner="&& cd ${{ inputs.working_path }} && rm -rf ${JOB_NAME} || ( cd ${{ inputs.working_path }} && rm -rf ${JOB_NAME} && exit 1 )"
+          cleaner_shell="&& cd ${{ inputs.working_path }} && rm -rf ${JOB_NAME} || ( cd ${{ inputs.working_path }} && rm -rf ${JOB_NAME} && exit 1 )"
         fi
         if [ ${MACHINE} != "local" ];then
           ssh ${MACHINE} """
@@ -59,7 +59,7 @@ runs:
             export CI=true
             source ${inputs.build-env}
             cd ${{ inputs.working_path }} && rm -rf ${JOB_NAME}  && cp -R source ${JOB_NAME} && cd ${JOB_NAME}
-            srun --job-name=${JOB_NAME} --partition=${inputs.partition} --time=10 bash -c '${build_shell}' ${cleaner}          
+            srun --job-name=${JOB_NAME} --partition=${inputs.partition} --time=10 bash -c '${{ inputs.build_shell }}' ${cleaner_shell}
           """
         else
           export CI=true
