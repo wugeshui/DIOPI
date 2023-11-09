@@ -4,6 +4,7 @@ on:
   push:
     branches:
       - dev_v0.25
+      - main
   pull_request:
     paths-ignore:
       - "**.md"
@@ -29,6 +30,7 @@ jobs:
         uses: wugeshui/DIOPI/.github/actions/checkout-code@main
         with:
           machine: "SH1988"
+          env_name: $ENV_PATH
 
       - name: Set output variables
         id: set-run-vars
@@ -40,6 +42,16 @@ jobs:
           echo "RUN_RESULT=$RUN_RESULT" >> "$GITHUB_OUTPUT"
 
 #      - name: lint
+#        uses: wugeshui/DIOPI/.github/actions/code-build-test@main
+#        with:
+#          machine: "SH1988"
+#          build-env:
+#          build_shell:
+#          job_name:
+#          partition:
+#          cleaner:
+
+
 #        run: |
 #          ssh CUDA """
 #          set -e

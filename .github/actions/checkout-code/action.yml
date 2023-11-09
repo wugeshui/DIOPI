@@ -11,6 +11,10 @@ inputs:
     description: ci work home
     required: false
     default: '/mnt/cache/share/deeplinkci/github/${{ github.repository }}/${{ github.run_number }}'
+  env_name:
+    description: If set to other value, the job need ssh
+    required: false
+    default: 'local'
 
 runs:
   using: composite
@@ -21,6 +25,8 @@ runs:
       shell: bash
       run: |
         function checkout_code(){
+          echo ${{ inputs.env_name }}
+          echo ${ENV_PATH}
           source ~/.bashrc
           mkdir -p ${{ inputs.working_path }} && cd ${{ inputs.working_path }} && rm -rf source
           if [ -n "${{ github.event.pull_request.head.repo.full_name }}" ] && [[ ! "${{ github.event.pull_request.head.repo.full_name }}" == *DeepLink-org* ]]; then
