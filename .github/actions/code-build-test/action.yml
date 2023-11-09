@@ -39,14 +39,15 @@ runs:
       env:
         JOB_NAME: ${inputs.job_name}
         MACHINE: ${{ inputs.machine }}
+        CLEANER: ${{ inputs.cleaner }}
         GEN_DATA: "diopi_test/python/cache"
       shell: bash
       run: |
-        if [ ${inputs.cleaner} == "error_all" ];then
+        if [ ${CLEANER} == "error_all" ];then
           cleaner="|| ( cd ${{ inputs.working_path }} && rm -rf ${JOB_NAME} && exit 1 )"
-        if [ ${inputs.cleaner} == "error_data" ];then
+        if [ ${CLEANER} == "error_data" ];then
           cleaner="|| ( cd ${{ inputs.working_path }}/${JOB_NAME} && git clean -xdf ${GEN_DATA} && exit 1 )"
-        elif [ ${inputs.cleaner} == "data" ];then
+        elif [ ${CLEANER} == "data" ];then
           cleaner="&& cd ${{ inputs.working_path }}/${JOB_NAME} && git clean -xdf ${GEN_DATA} || ( cd ${{ inputs.working_path }}/${JOB_NAME} && git clean -xdf ${GEN_DATA} && exit 1 )"
         else
           cleaner="&& cd ${{ inputs.working_path }} && rm -rf ${JOB_NAME} || ( cd ${{ inputs.working_path }} && rm -rf ${JOB_NAME} && exit 1 )"
