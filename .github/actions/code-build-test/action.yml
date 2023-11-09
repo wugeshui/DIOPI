@@ -57,9 +57,9 @@ runs:
             set -e
             source ~/.bashrc
             export CI=true
-            source ${inputs.build-env}
+            source ${{ inputs.build-env }}
             cd ${{ inputs.working_path }} && rm -rf ${JOB_NAME}  && cp -R source ${JOB_NAME} && cd ${JOB_NAME}
-            srun --job-name=${JOB_NAME} --partition=${inputs.partition} --time=10 bash -c '${{ inputs.build_shell }}' ${cleaner_shell}
+            srun --job-name=${JOB_NAME} --partition=${{ inputs.partition }} --time=10 bash -c '${{ inputs.build_shell }}' ${cleaner_shell}
           """
         else
           export CI=true
