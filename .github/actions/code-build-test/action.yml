@@ -47,9 +47,9 @@ runs:
         if [ ${inputs.cleaner} == "error_data" ];then
           cleaner="|| ( cd ${{ inputs.working_path }}/${JOB_NAME} && git clean -xdf ${GEN_DATA} && exit 1 )"
         elif [ ${inputs.cleaner} == "data" ];then
-          cleaner="&& cd ${{ inputs.working_path }/${JOB_NAME} && git clean -xdf ${GEN_DATA} || ( cd ${DEEPLINK_PATH}/${GITHUB_RUN_NUMBER}/${JOB_NAME} && git clean -xdf ${GEN_DATA} && exit 1 )"
+          cleaner="&& cd ${{ inputs.working_path }/${JOB_NAME} && git clean -xdf ${GEN_DATA} || ( cd ${{ inputs.working_path }}/${JOB_NAME} && git clean -xdf ${GEN_DATA} && exit 1 )"
         else
-          cleaner="&& cd ${{ inputs.working_path }} && rm -rf ${JOB_NAME} || ( cd ${DEEPLINK_PATH}/${GITHUB_RUN_NUMBER}/ && rm -rf ${JOB_NAME} && exit 1 )"
+          cleaner="&& cd ${{ inputs.working_path }} && rm -rf ${JOB_NAME} || ( cd ${{ inputs.working_path }} && rm -rf ${JOB_NAME} && exit 1 )"
         fi
         if [ ${MACHINE} != "local" ];then
           ssh ${MACHINE} """
