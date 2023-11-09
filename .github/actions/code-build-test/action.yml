@@ -27,6 +27,10 @@ inputs:
     description: After the construction is completed, decide whether to clean up (all,data,error_all,error_data)
     required: false
     default: ""
+  copy_job:
+    description: False to use old job, true to delete and recopy first
+    required: true
+    default: ""
   working_path:
     description: ci work home
     required: false
@@ -37,7 +41,7 @@ runs:
   steps:
     - name : build and test
       env:
-        JOB_NAME: ${inputs.job_name}
+        JOB_NAME: ${{ inputs.job_name }}
         MACHINE: ${{ inputs.machine }}
         CLEANER: ${{ inputs.cleaner }}
         GEN_DATA: "diopi_test/python/cache"
@@ -57,8 +61,10 @@ runs:
             set -e
             source ~/.bashrc
             export CI=true
-            source ${{ inputs.build-env }}
-            cd ${{ inputs.working_path }} && rm -rf ${JOB_NAME}  && cp -R source ${JOB_NAME} && cd ${JOB_NAME}
+            source ${{ inputs.build-env }} && cd ${{ inputs.working_path }}
+            if [  ]
+            rm -rf ${JOB_NAME}  && cp -R source ${JOB_NAME}
+            cd ${JOB_NAME}
             srun --job-name=${JOB_NAME} --partition=${{ inputs.partition }} --time=10 bash -c '${{ inputs.build_shell }}' ${cleaner_shell}
           """
         else
