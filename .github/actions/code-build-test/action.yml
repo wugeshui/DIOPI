@@ -47,7 +47,6 @@ runs:
         WORK_PATH: ${{ inputs.work_path }}
       shell: bash
       run: |
-        env
         if [ ${CLEANER} == "error_all" ];then
           cleaner_shell="|| ( cd ${WORK_PATH} && rm -rf ${JOB_NAME} && exit 1 )"
         elif [ ${CLEANER} == "error_data" ];then
