@@ -30,7 +30,7 @@ inputs:
   clean_job:
     description: If set to any value, clean the job
     required: false
-  working_path:
+  work_path:
     description: ci work home
     required: false
     default: '/mnt/cache/share/deeplinkci/github/${{ github.repository }}/${{ github.run_number }}'
@@ -44,23 +44,24 @@ runs:
         MACHINE: ${{ inputs.machine }}
         CLEANER: ${{ inputs.cleaner }}
         GEN_DATA: "diopi_test/python/cache"
+        WORK_PATH: ${{ inputs.work_path }}
       shell: bash
       run: |
         if [ ${CLEANER} == "error_all" ];then
-          cleaner_shell="|| ( cd ${{ inputs.working_path }} && rm -rf ${JOB_NAME} && exit 1 )"
+          cleaner_shell="|| ( cd ${WORK_PATH} && rm -rf ${JOB_NAME} && exit 1 )"
         elif [ ${CLEANER} == "error_data" ];then
-          cleaner_shell="|| ( cd ${{ inputs.working_path }}/${JOB_NAME} && git clean -xdf ${GEN_DATA} && exit 1 )"
+          cleaner_shell="|| ( cd ${WORK_PATH}/${JOB_NAME} && git clean -xdf ${GEN_DATA} && exit 1 )"
         elif [ ${CLEANER} == "data" ];then
-          cleaner_shell="&& cd ${{ inputs.working_path }}/${JOB_NAME} && git clean -xdf ${GEN_DATA} || ( cd ${{ inputs.working_path }}/${JOB_NAME} && git clean -xdf ${GEN_DATA} && exit 1 )"
+          cleaner_shell="&& cd ${WORK_PATH}/${JOB_NAME} && git clean -xdf ${GEN_DATA} || ( cd ${WORK_PATH}/${JOB_NAME} && git clean -xdf ${GEN_DATA} && exit 1 )"
         else
-          cleaner_shell="&& cd ${{ inputs.working_path }} && rm -rf ${JOB_NAME} || ( cd ${{ inputs.working_path }} && rm -rf ${JOB_NAME} && exit 1 )"
+          cleaner_shell="&& cd ${WORK_PATH} && rm -rf ${JOB_NAME} || ( cd ${WORK_PATH} && rm -rf ${JOB_NAME} && exit 1 )"
         fi
         if [ ${MACHINE} != "local" ];then
           ssh ${MACHINE} """
             set -e
             source ~/.bashrc
             export CI=true
-            source ${{ inputs.build_env }} && cd ${{ inputs.working_path }}
+            source ${{ inputs.build_env }} && cd ${WORK_PATH}
             if [ -z "${{ inputs.clean_job }}" ];then
               rm -rf ${JOB_NAME}  && cp -R source ${JOB_NAME}
             fi
@@ -70,6 +71,6 @@ runs:
         else
           export CI=true
           source ~/.bashrc
-          cd ${{ inputs.working_path }} && rm -rf ${JOB_NAME}  && cp -R source ${JOB_NAME} && cd ${JOB_NAME}
+          cd ${WORK_PATH} && rm -rf ${JOB_NAME}  && cp -R source ${JOB_NAME} && cd ${JOB_NAME}
           ${build_shell} ${cleaner} 
         fi

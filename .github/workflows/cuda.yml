@@ -50,12 +50,11 @@ jobs:
         uses: wugeshui/DIOPI/.github/actions/code-build-test@main
         with:
           machine: "SH1988"
-          build-env: "/mnt/cache/share/platform/env/pt2.0_diopi"
+          build_env: "/mnt/cache/share/platform/env/pt2.0_diopi"
           build_shell: 'cd diopi_test && bash scripts/ci_script.sh py-lint && bash scripts/ci_script.sh cpp-lint && cd ../impl && bash scripts/ci_script.sh cpp-lint'
           job_name: ${{ github.job }}
           partition: ${{ vars.SLURM_PAR_SH1984 }}
           cleaner: all
-          copy_job: "True"
 
 
 #        run: |
