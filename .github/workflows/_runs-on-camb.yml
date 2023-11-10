@@ -43,7 +43,7 @@ jobs:
     needs: checkout_code
     steps:
       - name: build on camb
-        uses: actions/code-build-test@main
+        uses: .github/actions/code-build-test@main
         with:
           machine: ${{ inputs.machine }}
           build_env: ${{ inputs.build_env }}
@@ -52,7 +52,7 @@ jobs:
           job_name: "build_test"
           cleaner: "error_all"
       - name: clang-tidy
-        uses: actions/code-build-test@main
+        uses: .github/actions/code-build-test@main
         with:
           machine: ${{ inputs.machine }}
           build_env: ${{ inputs.build_env }}
