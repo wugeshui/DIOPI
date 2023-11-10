@@ -35,11 +35,12 @@ jobs:
     runs-on: ${{ inputs.runner }}
     steps:
       - name: Checkout Code
-        uses: wugeshui/DIOPI/.github/actions/code-build-test@main
+        uses: ${{ inputs.uses_actions }}
         with:
           machine: ${{ inputs.machine }}
   build:
     runs-on: ${{ inputs.runner }}
+    needs: checkout_code
     steps:
       - name: build on camb
         uses: actions/code-build-test@main
