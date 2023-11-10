@@ -47,6 +47,7 @@ runs:
         WORK_PATH: ${{ inputs.work_path }}
       shell: bash
       run: |
+        env
         if [ ${CLEANER} == "error_all" ];then
           cleaner_shell="|| ( cd ${WORK_PATH} && rm -rf ${JOB_NAME} && exit 1 )"
         elif [ ${CLEANER} == "error_data" ];then
@@ -56,6 +57,7 @@ runs:
         else
           cleaner_shell="&& cd ${WORK_PATH} && rm -rf ${JOB_NAME} || ( cd ${WORK_PATH} && rm -rf ${JOB_NAME} && exit 1 )"
         fi
+        echo ${cleaner_shell}
         if [ ${MACHINE} != "local" ];then
           ssh ${MACHINE} """
             set -e
@@ -72,5 +74,5 @@ runs:
           export CI=true
           source ~/.bashrc
           cd ${WORK_PATH} && rm -rf ${JOB_NAME}  && cp -R source ${JOB_NAME} && cd ${JOB_NAME}
-          ${build_shell} ${cleaner} 
+          ${{ inputs.build_shell }} ${cleaner_shell}
         fi
