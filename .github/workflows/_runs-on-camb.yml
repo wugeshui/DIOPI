@@ -35,7 +35,7 @@ jobs:
     runs-on: ${{ inputs.runner }}
     steps:
       - name: Checkout Code
-        uses: ${{ inputs.uses_actions }}
+        uses: wugeshui/DIOPI/.github/actions/code-build-test@main
         with:
           machine: ${{ inputs.machine }}
   build:
