@@ -55,6 +55,7 @@ jobs:
           job_name: ${{ github.job }}
           partition: ${{ vars.SLURM_PAR_SH1984 }}
           cleaner: all
+          copy_job: "True"
 
 
 #        run: |
