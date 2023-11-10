@@ -21,7 +21,7 @@ inputs:
     default: ""
   partition:
     description: Set cluster partition
-    required: true
+    required: false
     default: ""
   cleaner:
     description: After the construction is completed, decide whether to clean up (all,data,error_all,error_data)
@@ -34,6 +34,10 @@ inputs:
     description: ci work home
     required: false
     default: '/mnt/cache/share/deeplinkci/github/${{ github.repository }}/${{ github.run_number }}'
+  srun_arg:
+    description: additional parameters need to be added during srun
+    required: false
+    default: ''
 
 runs:
   using: composite
@@ -67,7 +71,7 @@ runs:
               rm -rf ${JOB_NAME}  && cp -R source ${JOB_NAME}
             fi
             cd ${JOB_NAME}
-            srun --job-name=${JOB_NAME} --partition=${{ inputs.partition }} --time=10 bash -c '${{ inputs.build_shell }}' ${cleaner_shell}
+            srun --job-name=${JOB_NAME} --partition=${{ inputs.partition }} ${{ inputs.srun_arg }} --time=10 bash -c '${{ inputs.build_shell }}' ${cleaner_shell}
           """
         else
           export CI=true

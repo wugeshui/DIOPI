@@ -1,0 +1,62 @@
+name: runs on camb
+
+on:
+  workflow_call:
+    inputs:
+      machine:
+        description: If set to other value, the job need ssh
+        required: false
+        default: "CAMB"
+      build_env:
+        description: Set up the build environment
+        required: false
+        default: "/mnt/cache/share/platform/env/camb_ci_diopi_impl"
+      partition:
+        description: Set cluster partition
+        required: false
+        default: "${{ vars.SLURM_PAR_CAMB != '' && vars.SLURM_PAR_CAMB || 'camb_mlu370_m8 --exclude HOST-10-142-11-120,HOST-10-142-11-126' }}"
+      runner:
+        description: Set up the build environment
+        required: false
+        default: "tps-diopi-ci"
+      uses_actions:
+        description: Specify the actions file to use
+        required: false
+        default: "wugeshui/DIOPI/.github/actions/code-build-test@main"
+
+  jobs:
+    checkout_code:
+      name: checkout code
+      runs-on: ${{ inputs.runner }}
+      steps:
+        - name: Checkout Code
+          uses: ${{ inputs.uses_actions }}
+          with:
+            machine: ${{ inputs.machine }}
+    build:
+      runs-on: ${{ inputs.runner }}
+      steps:
+        - name: build on camb
+          uses: actions/code-build-test@main
+          with:
+            machine: ${{ inputs.machine }}
+            build_env: ${{ inputs.build_env }}
+            partition: ${{ inputs.partition }}
+            build_shell: "cd impl && bash scripts/build_impl.sh camb"
+            job_name: "build_test"
+            cleaner: "error_all"
+        - name: clang-tidy
+          uses: actions/code-build-test@main
+          with:
+            machine: ${{ inputs.machine }}
+            build_env: ${{ inputs.build_env }}
+            partition: ${{ inputs.partition }}
+            build_shell: "cd impl && bash scripts/ci_script.sh clang-tidy"
+            job_name: "build_test"
+            cleaner: "error_all"
+
+#    op-test:
+#      runs-on: ${{ inputs.runner }}
+#      steps:
+#        - name: op test on camb
+#          uses: ${{ inputs.uses_actions }}

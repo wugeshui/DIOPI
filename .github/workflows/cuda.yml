@@ -36,8 +36,6 @@ jobs:
         id: set-run-vars
         env:
           GITHUB_TOKEN: "${{ secrets.CI_TOKEN != '' && secrets.CI_TOKEN || 'NONE' }}"
-          machine: "SH1988"
-          build_env: "/mnt/cache/share/platform/env/pt2.0_diopi"
         run: |
           PR_NUMBER="${{ github.event.pull_request.number || 0 }}"
           curl -sLJO https://raw.githubusercontent.com/${{ github.repository }}/main/scripts/filter_ci.py
@@ -54,20 +52,14 @@ jobs:
           partition: ${{ vars.SLURM_PAR_SH1984 != '' && vars.SLURM_PAR_SH1984 || 'pat_rd -x SH-IDC1-10-198-8-58,SH-IDC1-10-198-8-87' }}
           cleaner: all
 
+#  runs_on_cuda:
+#    name: runs on cuda
 
 
-#        run: |
-#          ssh CUDA """
-#          set -e
-#          cd ${DEEPLINK_PATH}/ && ls -al && find ${DEEPLINK_PATH}/ -maxdepth 1 -mmin +300 -type d |xargs rm -rf
-#          source ${ENV_PATH}/${ENV_NAME}
-#          cd ${DEEPLINK_PATH}/${GITHUB_RUN_NUMBER} && rm -rf ${GITHUB_JOB} && cp -R source ${GITHUB_JOB}  && cd ${GITHUB_JOB}
-#          export CI=true
-#          srun --job-name=${GITHUB_JOB} --partition=${SLURM_PAR_SH1988} --time=10 bash -c 'cd diopi_test && bash scripts/ci_script.sh py-lint \
-#          && bash scripts/ci_script.sh cpp-lint && cd ../impl \ && bash scripts/ci_script.sh cpp-lint' \
-#          && cd ${NFS_PATH}/${GITHUB_RUN_NUMBER}/ && rm -rf ${GITHUB_JOB} \
-#          || ( cd ${NFS_PATH}/${GITHUB_RUN_NUMBER}/ && rm -rf ${GITHUB_JOB} && exit 1 )
-#          """
-
+  runs-on-camb:
+    name: runs on camb
+    needs: check
+#    if: ${{ contains( needs.check.outputs.output, 'CAMB' ) }}
+    uses: ./.github/workflows/_runs-on-camb.yml
 
 
