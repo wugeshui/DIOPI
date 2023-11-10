@@ -53,8 +53,9 @@ jobs:
           build_env: "/mnt/cache/share/platform/env/pt2.0_diopi"
           build_shell: 'cd diopi_test && bash scripts/ci_script.sh py-lint && bash scripts/ci_script.sh cpp-lint && cd ../impl && bash scripts/ci_script.sh cpp-lint'
           job_name: ${{ github.job }}
-          partition: ${{ vars.SLURM_PAR_SH1984 }}
+          partition: ${{ vars.SLURM_PAR_SH1984 != '' && vars.SLURM_PAR_SH1984 || 'pat_rd -x SH-IDC1-10-198-8-58,SH-IDC1-10-198-8-87' }}
           cleaner: all
+
 
 
 #        run: |
