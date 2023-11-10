@@ -37,12 +37,14 @@ jobs:
         env:
           GITHUB_TOKEN: "${{ secrets.CI_TOKEN != '' && secrets.CI_TOKEN || 'NONE' }}"
           machine: "SH1988"
-          build-env: "/mnt/cache/share/platform/env/pt2.0_diopi"
+          build_env: "/mnt/cache/share/platform/env/pt2.0_diopi"
         run: |
           PR_NUMBER="${{ github.event.pull_request.number || 0 }}"
           ssh ${machine} """
-          source ${build-env}
+          echo "${build_env}"
+          source ${build_env}
           env && hostname && pwd &&ls -al
+          cd ${DEEPLINK_PATH}/${GITHUB_RUN_NUMBER}/source/scripts && ls -al
           RUN_RESULT=$(python3  ${DEEPLINK_PATH}/${GITHUB_RUN_NUMBER}/source/scripts/filter_ci.py ${PR_NUMBER})
           """
           echo "RUN_RESULT=$RUN_RESULT" >> "$GITHUB_OUTPUT"
