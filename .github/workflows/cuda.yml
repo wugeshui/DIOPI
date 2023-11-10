@@ -40,13 +40,8 @@ jobs:
           build_env: "/mnt/cache/share/platform/env/pt2.0_diopi"
         run: |
           PR_NUMBER="${{ github.event.pull_request.number || 0 }}"
-          ssh ${machine} """
-          echo "${build_env}"
-          source ${build_env}
-          env && hostname && pwd &&ls -al
-          cd ${DEEPLINK_PATH}/${GITHUB_RUN_NUMBER}/source/scripts && ls -al
-          RUN_RESULT=$(python3  ${DEEPLINK_PATH}/${GITHUB_RUN_NUMBER}/source/scripts/filter_ci.py ${PR_NUMBER})
-          """
+          curl -sLJO https://raw.githubusercontent.com/${{ github.repository }}/main/scripts/filter_ci.py
+          RUN_RESULT=$(python3 filter_ci.py ${PR_NUMBER})
           echo "RUN_RESULT=$RUN_RESULT" >> "$GITHUB_OUTPUT"
 
       - name: lint
