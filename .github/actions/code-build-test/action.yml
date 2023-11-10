@@ -27,10 +27,9 @@ inputs:
     description: After the construction is completed, decide whether to clean up (all,data,error_all,error_data)
     required: false
     default: ""
-  copy_job:
-    description: False to use old job, True to delete and recopy first
+  clean_job:
+    description: If set to any value, clean the job
     required: false
-    default: "True"
   working_path:
     description: ci work home
     required: false
@@ -62,7 +61,7 @@ runs:
             source ~/.bashrc
             export CI=true
             source ${{ inputs.build_env }} && cd ${{ inputs.working_path }}
-            if [ ${{ inputs.copy_job == "True" }} ];then
+            if [ -z "${{ inputs.clean_job }}" ];then
               rm -rf ${JOB_NAME}  && cp -R source ${JOB_NAME}
             fi
             cd ${JOB_NAME}
