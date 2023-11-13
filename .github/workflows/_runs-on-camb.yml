@@ -60,6 +60,7 @@ jobs:
           build_shell: "cd impl && bash scripts/ci_script.sh clang-tidy"
           job_name: "build_test"
           cleaner: "error_all"
+          cover_job: "1"
 
 #    op-test:
 #      runs-on: ${{ inputs.runner }}
