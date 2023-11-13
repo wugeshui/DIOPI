@@ -41,29 +41,33 @@ jobs:
   build:
     runs-on: ${{ inputs.runner }}
     needs: checkout_code
+    with:
+      machine: ${{ inputs.machine }}
+      build_env: ${{ inputs.build_env }}
+      partition: ${{ inputs.partition }}
+      job_name: "build_test"
+      cleaner: "error_all"
     steps:
       - name: build on camb
         uses: wugeshui/DIOPI/.github/actions/code-build-test@main
         with:
-          machine: ${{ inputs.machine }}
-          build_env: ${{ inputs.build_env }}
-          partition: ${{ inputs.partition }}
           build_shell: "cd impl && bash scripts/build_impl.sh camb"
-          job_name: "build_test"
-          cleaner: "error_all"
       - name: clang-tidy
         uses: wugeshui/DIOPI/.github/actions/code-build-test@main
         with:
-          machine: ${{ inputs.machine }}
-          build_env: ${{ inputs.build_env }}
-          partition: ${{ inputs.partition }}
           build_shell: "cd impl && bash scripts/ci_script.sh clang-tidy"
-          job_name: "build_test"
-          cleaner: "error_all"
           cover_job: "1"
 
-#    op-test:
-#      runs-on: ${{ inputs.runner }}
-#      steps:
-#        - name: op test on camb
-#          uses: ${{ inputs.uses_actions }}
+  op-test:
+    runs-on: ${{ inputs.runner }}
+    needs: build
+    steps:
+      - name: op test on camb
+        uses: wugeshui/DIOPI/.github/actions/code-build-test@main
+        machine: ${{ inputs.machine }}
+        build_env: ${{ inputs.build_env }}
+        partition: ${{ inputs.partition }}
+        build_shell: "'cd diopi_test/python && python main.py --mode gen_case --impl_folder ${NFS_PATH_LUSTRE}/${GITHUB_RUN_NUMBER}/${BUILD_TEST1}/impl/camb/ && coverage run -p main.py --mode run_test'"
+        job_name: "build_test"
+        cleaner: "error_all"
+        cover_job: "1"
