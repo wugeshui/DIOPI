@@ -82,10 +82,11 @@ jobs:
     steps:
       - name: rt test on camb
         uses: wugeshui/DIOPI/.github/actions/code-build-test@main
-        machine: ${{ inputs.machine }}
-        build_env: ${{ inputs.build_env }}
-        partition: ${{ inputs.partition }}
-        build_shell: " cd diopi_test/python && python main.py --mode utest "
-        srun_arg: "--gres=mlu:1"
-        job_name: "build_test"
-        cover_job: "1"
+        with:
+          machine: ${{ inputs.machine }}
+          build_env: ${{ inputs.build_env }}
+          partition: ${{ inputs.partition }}
+          build_shell: " cd diopi_test/python && python main.py --mode utest "
+          srun_arg: "--gres=mlu:1"
+          job_name: "build_test"
+          cover_job: "1"
