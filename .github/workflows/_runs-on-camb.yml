@@ -41,21 +41,25 @@ jobs:
   build:
     runs-on: ${{ inputs.runner }}
     needs: checkout_code
-    with:
-      machine: ${{ inputs.machine }}
-      build_env: ${{ inputs.build_env }}
-      partition: ${{ inputs.partition }}
-      job_name: "build_test"
-      cleaner: "error_all"
     steps:
       - name: build on camb
         uses: wugeshui/DIOPI/.github/actions/code-build-test@main
         with:
+          machine: ${{ inputs.machine }}
+          build_env: ${{ inputs.build_env }}
+          partition: ${{ inputs.partition }}
           build_shell: "cd impl && bash scripts/build_impl.sh camb"
+          job_name: "build_test"
+          cleaner: "error_all"
       - name: clang-tidy
         uses: wugeshui/DIOPI/.github/actions/code-build-test@main
         with:
+          machine: ${{ inputs.machine }}
+          build_env: ${{ inputs.build_env }}
+          partition: ${{ inputs.partition }}
           build_shell: "cd impl && bash scripts/ci_script.sh clang-tidy"
+          job_name: "build_test"
+          cleaner: "error_all"
           cover_job: "1"
 
 #  op-test:
@@ -71,3 +75,17 @@ jobs:
 #        job_name: "build_test"
 #        cleaner: "error_all"
 #        cover_job: "1"
+
+  rt-test:
+    runs-on: ${{ inputs.runner }}
+    needs: build
+    steps:
+      - name: rt test on camb
+        uses: wugeshui/DIOPI/.github/actions/code-build-test@main
+        machine: ${{ inputs.machine }}
+        build_env: ${{ inputs.build_env }}
+        partition: ${{ inputs.partition }}
+        build_shell: " cd diopi_test/python && python main.py --mode utest "
+        srun_arg: "--gres=mlu:1"
+        job_name: "build_test"
+        cover_job: "1"

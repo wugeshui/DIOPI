@@ -52,16 +52,16 @@ runs:
         WORK_PATH: ${{ inputs.work_path }}
       shell: bash
       run: |
+        cleaner_shell="&& pwd"
         if [ ${CLEANER} == "error_all" ];then
           cleaner_shell="|| ( cd ${WORK_PATH} && rm -rf ${JOB_NAME} && exit 1 )"
         elif [ ${CLEANER} == "error_data" ];then
           cleaner_shell="|| ( cd ${WORK_PATH}/${JOB_NAME} && git clean -xdf ${GEN_DATA} && exit 1 )"
         elif [ ${CLEANER} == "data" ];then
           cleaner_shell="&& cd ${WORK_PATH}/${JOB_NAME} && git clean -xdf ${GEN_DATA} || ( cd ${WORK_PATH}/${JOB_NAME} && git clean -xdf ${GEN_DATA} && exit 1 )"
-        else
+        elif [ ${CLEANER} == "all" ];then
           cleaner_shell="&& cd ${WORK_PATH} && rm -rf ${JOB_NAME} || ( cd ${WORK_PATH} && rm -rf ${JOB_NAME} && exit 1 )"
         fi
-        echo ${cleaner_shell}
         if [ ${MACHINE} != "local" ];then
           ssh ${MACHINE} """
             set -e
