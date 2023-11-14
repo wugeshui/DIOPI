@@ -1,0 +1,58 @@
+name: runs on camb
+
+on:
+  workflow_call:
+    inputs:
+      machine:
+        description: If set to other value, the job need ssh
+        type: string
+        required: false
+        default: "TOPSRIDER"
+      runner:
+        description: Set up the build environment
+        type: string
+        required: false
+        default: "tps-topsrider-ci"
+
+jobs:
+  checkout_code:
+    name: checkout code
+    runs-on: ${{ inputs.runner }}
+    steps:
+      - name: Checkout Code
+        uses: wugeshui/DIOPI/.github/actions/checkout-code@main
+
+  build:
+    runs-on: ${{ inputs.runner }}
+    needs: checkout_code
+    steps:
+      - name: build on topsrider
+        uses: wugeshui/DIOPI/.github/actions/code-build-test@main
+        with:
+          build_env: ${{ inputs.build_env }}
+          build_shell: "export DIOPI_BUILD_TESTRT=ON && cd impl && mkdir lib && cp -R /home/deeplink/*.so lib/ && cp -R /home/deeplink/prebuilt topsrider/ && sh scripts/build_impl.sh tops"
+          job_name: "build_test"
+
+#  op-test:
+#    runs-on: ${{ inputs.runner }}
+#    needs: build
+#    steps:
+#      - name: op test on camb
+#        uses: wugeshui/DIOPI/.github/actions/code-build-test@main
+#        with:
+#          build_shell: "'cd diopi_test/python && python main.py --mode gen_case --impl_folder ${NFS_PATH_LUSTRE}/${GITHUB_RUN_NUMBER}/${BUILD_TEST1}/impl/camb/ && coverage run -p main.py --mode run_test'"
+#          job_name: "build_test"
+#          cleaner: "clean_data"
+#          cover_job: "1"
+
+
+  rt-test:
+    runs-on: ${{ inputs.runner }}
+    needs: rt test
+    steps:
+      - name: rt test on topsrider
+        uses: wugeshui/DIOPI/.github/actions/code-build-test@main
+        with:
+          build_shell: " cd diopi_test/python && ln -sf /mnt/cache/share/deeplinkci/data/ data && python main.py --mode utest "
+          job_name: "build_test"
+          cover_job: "1"

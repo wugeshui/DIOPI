@@ -24,7 +24,11 @@ inputs:
     required: false
     default: ""
   cleaner:
-    description: After the construction is completed, decide whether to clean up (all,data,error_all,error_data)
+    description: After the construction is completed, decide whether to clean up \
+      clean_all - Clean up all regardless of task results
+      clean_data - If the task fails, clean up  data
+      clean_all_if_error - If the task fails, clean up all data
+      clean_data_if_error - Clean up all regardless of task results
     required: false
     default: ""
   cover_job:
@@ -52,14 +56,14 @@ runs:
         WORK_PATH: ${{ inputs.work_path }}
       shell: bash
       run: |
-        cleaner_shell="&& pwd"
-        if [ ${CLEANER} == "error_all" ];then
+        cleaner_shell=" "
+        if [ "${CLEANER}" == "clean_all_if_error" ];then
           cleaner_shell="|| ( cd ${WORK_PATH} && rm -rf ${JOB_NAME} && exit 1 )"
-        elif [ ${CLEANER} == "error_data" ];then
+        elif [ "${CLEANER}" == "clean_data_if_error" ];then
           cleaner_shell="|| ( cd ${WORK_PATH}/${JOB_NAME} && git clean -xdf ${GEN_DATA} && exit 1 )"
-        elif [ ${CLEANER} == "data" ];then
+        elif [ "${CLEANER}" == "clean_data" ];then
           cleaner_shell="&& cd ${WORK_PATH}/${JOB_NAME} && git clean -xdf ${GEN_DATA} || ( cd ${WORK_PATH}/${JOB_NAME} && git clean -xdf ${GEN_DATA} && exit 1 )"
-        elif [ ${CLEANER} == "all" ];then
+        elif [ "${CLEANER}" == "clean_all" ];then
           cleaner_shell="&& cd ${WORK_PATH} && rm -rf ${JOB_NAME} || ( cd ${WORK_PATH} && rm -rf ${JOB_NAME} && exit 1 )"
         fi
         if [ ${MACHINE} != "local" ];then

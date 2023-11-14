@@ -1,0 +1,74 @@
+name: runs on camb
+
+on:
+  workflow_call:
+    inputs:
+      machine:
+        description: If set to other value, the job need ssh
+        type: string
+        required: false
+        default: "SH1424"
+      build_env:
+        description: Set up the build environment
+        type: string
+        required: false
+        default: "/mnt/cache/share/platform/env/pt2.0_diopi"
+      partition:
+        description: Set cluster partition
+        type: string
+        required: false
+        default: "${{ vars.SLURM_PAR_SH1424 != '' && vars.SLURM_PAR_SH1424 || 'pat_rd' }}"
+      runner:
+        description: Set up the build environment
+        type: string
+        required: false
+        default: "tps-diopi-ci"
+
+jobs:
+  checkout_code:
+    name: checkout code
+    runs-on: ${{ inputs.runner }}
+    steps:
+      - name: Checkout Code
+        uses: wugeshui/DIOPI/.github/actions/checkout-code@main
+        with:
+          machine: ${{ inputs.machine }}
+  build:
+    runs-on: ${{ inputs.runner }}
+    needs: checkout_code
+    steps:
+      - name: build on camb
+        uses: wugeshui/DIOPI/.github/actions/code-build-test@main
+        with:
+          machine: ${{ inputs.machine }}
+          build_env: ${{ inputs.build_env }}
+          partition: ${{ inputs.partition }}
+          build_shell: "cd impl && bash scripts/build_impl.sh torch"
+          job_name: "build_test"
+          cleaner: "clean_all_if_error"
+
+  op-test:
+    runs-on: ${{ inputs.runner }}
+    needs: build
+    steps:
+      - - name: gen-test-data
+        uses: wugeshui/DIOPI/.github/actions/code-build-test@main
+        with:
+          machine: ${{ inputs.machine }}
+          build_env: ${{ inputs.build_env }}
+          partition: ${{ inputs.partition }}
+          build_shell: "cp -f scripts/ci/diopi_config_A100.py  diopi_test/python/configs/diopi_configs.py && cd diopi_test/python && python main.py --mode gen_data"
+          job_name: "build_test"
+          cleaner: "clean_data"
+          cover_job: "1"
+      - name: op test on camb
+        uses: wugeshui/DIOPI/.github/actions/code-build-test@main
+        with:
+          machine: ${{ inputs.machine }}
+          build_env: ${{ inputs.build_env }}
+          partition: ${{ inputs.partition }}
+          build_shell: "export LD_LIBRARY_PATH=\$LD_LIBRARY_PATH:${DEEPLINK_PATH}/${GITHUB_RUN_NUMBER}/${BUILD_TEST1}/impl/lib && cd diopi_test/python && python main.py --mode gen_case && python main.py --mode run_test"
+          job_name: "build_test"
+          cleaner: "clean_data"
+          cover_job: "1"
+

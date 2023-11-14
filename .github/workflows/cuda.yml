@@ -54,7 +54,9 @@ jobs:
 
 #  runs_on_cuda:
 #    name: runs on cuda
-
+#    needs: check
+##    if: ${{ contains( needs.check.outputs.output, 'NV' ) }}
+#    uses: ./.github/workflows/_runs-on-cuda.yml
 
   runs-on-camb:
     name: runs on camb
@@ -62,4 +64,26 @@ jobs:
 #    if: ${{ contains( needs.check.outputs.output, 'CAMB' ) }}
     uses: ./.github/workflows/_runs-on-camb.yml
 
+  runs-on-a100:
+    name: runs on camb
+    needs: check
+#    if: ${{ contains( needs.check.outputs.output, 'NV' ) }}
+    uses: ./.github/workflows/_runs-on-a100.yml
 
+  runs-on-ascend:
+    name: runs on ascend
+    needs: check
+#    if: ${{ contains( needs.check.outputs.output, 'ASCEND' ) }}
+    uses: ./.github/workflows/_runs-on-ascend.yml
+
+  runs-on-topsrider:
+    name: runs on topsrider
+    needs: check
+#    if: ${{ contains( needs.check.outputs.output, 'TOPSRIDER' ) }}
+    uses: ./.github/workflows/_runs-on-topsrider.yml
+
+  runs-on-supa:
+    name: runs on supa
+    needs: check
+#    if: ${{ contains( needs.check.outputs.output, 'SUPA' ) }}
+    uses: ./.github/workflows/_runs-on-supa.yml

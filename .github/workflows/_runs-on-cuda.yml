@@ -23,6 +23,11 @@ on:
         type: string
         required: false
         default: "tps-diopi-ci"
+      uses_actions:
+        description: Specify the actions file to use
+        type: string
+        required: false
+        default: "wugeshui/DIOPI/.github/actions/code-build-test@main"
 
 jobs:
   checkout_code:
@@ -45,7 +50,7 @@ jobs:
           partition: ${{ inputs.partition }}
           build_shell: "cd impl && bash scripts/build_impl.sh camb"
           job_name: "build_test"
-          cleaner: "clean_all_if_error"
+          cleaner: "error_all"
       - name: clang-tidy
         uses: wugeshui/DIOPI/.github/actions/code-build-test@main
         with:
@@ -54,50 +59,19 @@ jobs:
           partition: ${{ inputs.partition }}
           build_shell: "cd impl && bash scripts/ci_script.sh clang-tidy"
           job_name: "build_test"
-          cleaner: "clean_all_if_error"
+          cleaner: "error_all"
           cover_job: "1"
 
   op-test:
     runs-on: ${{ inputs.runner }}
     needs: build
     steps:
-
-#      - name: op test on camb
-#        uses: wugeshui/DIOPI/.github/actions/code-build-test@main
-#        with:
-#          machine: ${{ inputs.machine }}
-#          build_env: ${{ inputs.build_env }}
-#          partition: ${{ inputs.partition }}
-#          build_shell: "'cd diopi_test/python && python main.py --mode gen_case --impl_folder ${NFS_PATH_LUSTRE}/${GITHUB_RUN_NUMBER}/${BUILD_TEST1}/impl/camb/ && coverage run -p main.py --mode run_test'"
-#          job_name: "build_test"
-#          cleaner: "clean_data"
-#          cover_job: "1"
-      - name: all coverage check
-        if: ${{ (contains( github.ref, 'main') || startsWith(github.ref, 'refs/heads/v') || startsWith(github.ref, 'refs/heads/dev')) }}
-        uses: wugeshui/DIOPI/.github/actions/coverage@main
-        with:
-          machine: ${{ inputs.machine }}
-          build_env: ${{ inputs.build_env }}
-          coverage_type: "all"
-      - name: increment coverage check
-        if: ${{ contains( github.event_name, 'pull_request' ) && contains( github.base_ref, 'main' ) }}
-        uses: wugeshui/DIOPI/.github/actions/coverage@main
-        with:
-          machine: ${{ inputs.machine }}
-          build_env: ${{ inputs.build_env }}
-
-
-  rt-test:
-    runs-on: ${{ inputs.runner }}
-    needs: build
-    steps:
-      - name: rt test on camb
+      - name: op test on camb
         uses: wugeshui/DIOPI/.github/actions/code-build-test@main
-        with:
-          machine: ${{ inputs.machine }}
-          build_env: ${{ inputs.build_env }}
-          partition: ${{ inputs.partition }}
-          build_shell: " cd diopi_test/python && python main.py --mode utest "
-          srun_arg: "--gres=mlu:1"
-          job_name: "build_test"
-          cover_job: "1"
+        machine: ${{ inputs.machine }}
+        build_env: ${{ inputs.build_env }}
+        partition: ${{ inputs.partition }}
+        build_shell: "'cd diopi_test/python && python main.py --mode gen_case --impl_folder ${NFS_PATH_LUSTRE}/${GITHUB_RUN_NUMBER}/${BUILD_TEST1}/impl/camb/ && coverage run -p main.py --mode run_test'"
+        job_name: "build_test"
+        cleaner: "error_all"
+        cover_job: "1"

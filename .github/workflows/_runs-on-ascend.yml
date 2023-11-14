@@ -1,0 +1,66 @@
+name: runs on camb
+
+on:
+  workflow_call:
+    inputs:
+      machine:
+        description: If set to other value, the job need ssh
+        type: string
+        required: false
+        default: "ASCEND"
+      runner:
+        description: Set up the build environment
+        type: string
+        required: false
+        default: "tps-ascend-ci"
+
+jobs:
+  checkout_code:
+    name: checkout code
+    runs-on: ${{ inputs.runner }}
+    steps:
+      - name: Checkout Code
+        uses: wugeshui/DIOPI/.github/actions/checkout-code@main
+
+  build:
+    runs-on: ${{ inputs.runner }}
+    needs: checkout_code
+    steps:
+      - name: build on ascend
+        uses: wugeshui/DIOPI/.github/actions/code-build-test@main
+        with:
+          build_env: ${{ inputs.build_env }}
+          build_shell: "cd impl && bash scripts/build_impl.sh ascend"
+          job_name: "build_test"
+          cleaner: "clean_all_if_error"
+      - name: clang-tidy
+        uses: wugeshui/DIOPI/.github/actions/code-build-test@main
+        with:
+          build_shell: "cd impl && bash scripts/ci_script.sh clang-tidy"
+          job_name: "build_test"
+          cleaner: "clean_all_if_error"
+          cover_job: "1"
+
+#  op-test:
+#    runs-on: ${{ inputs.runner }}
+#    needs: build
+#    steps:
+#      - name: op test on ascend
+#        uses: wugeshui/DIOPI/.github/actions/code-build-test@main
+#        with:
+#          build_shell: "'cd diopi_test/python && python main.py --mode gen_case --impl_folder ${NFS_PATH_LUSTRE}/${GITHUB_RUN_NUMBER}/${BUILD_TEST1}/impl/camb/ && coverage run -p main.py --mode run_test'"
+#          job_name: "build_test"
+#          cleaner: "clean_data"
+#          cover_job: "1"
+
+
+  rt-test:
+    runs-on: ${{ inputs.runner }}
+    needs: rt test
+    steps:
+      - name: rt test on ascend
+        uses: wugeshui/DIOPI/.github/actions/code-build-test@main
+        with:
+          build_shell: " cd diopi_test/python && python main.py --mode utest "
+          job_name: "build_test"
+          cover_job: "1"

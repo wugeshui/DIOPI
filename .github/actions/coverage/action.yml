@@ -12,17 +12,17 @@ inputs:
     required: true
     default: ""
   working_path:
-    description: ci work home
+    description: working directory of ci
     required: false
     default: '/mnt/cache/share/deeplinkci/github/${{ github.repository }}/${{ github.run_number }}'
   coverage_type:
-    description: coverage type( all only_incre)
+    description: all - full coverage test，only_incre-incremental coverage test
     required: false
     default: "only_incre"
   require_coverage:
     description: input coverage rate
     required: false
-    default: "0"
+    default: ${{ vars.REQUIRE_COVERAGE != '' && vars.REQUIRE_COVERAGE || '40' }}
 
 runs:
   using: composite
@@ -42,7 +42,7 @@ runs:
             cd ${{ inputs.working_path }}/${JOB_NAME}
             bash scripts/increment_coverage.sh ${REQUIRE_COVERAGE}
           else
-            bash /mnt/cache/share/platform/dep/sonar/coverage_DIOPI_camb.sh ${{ inputs.working_path }}/${JOB_NAME} ${{ github.run_number }} "ON" || echo "get coverage fail"
+            bash /mnt/cache/share/platform/dep/sonar/coverage_DIOPI.sh ${{ inputs.working_path }}/${JOB_NAME} ${{ github.run_number }} "ON" || echo "get coverage fail"
           fi
         }
         if [ ${MACHINE} != "local" ];then
