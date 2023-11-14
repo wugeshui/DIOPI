@@ -65,7 +65,7 @@ jobs:
     uses: ./.github/workflows/_runs-on-camb.yml
 
   runs-on-a100:
-    name: runs on camb
+    name: runs on a100
     needs: check
 #    if: ${{ contains( needs.check.outputs.output, 'NV' ) }}
     uses: ./.github/workflows/_runs-on-a100.yml
