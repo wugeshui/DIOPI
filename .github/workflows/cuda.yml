@@ -82,8 +82,8 @@ jobs:
 #    if: ${{ contains( needs.check.outputs.output, 'TOPSRIDER' ) }}
     uses: ./.github/workflows/_runs-on-topsrider.yml
 
-  runs-on-supa:
-    name: runs on supa
-    needs: check
-#    if: ${{ contains( needs.check.outputs.output, 'SUPA' ) }}
-    uses: ./.github/workflows/_runs-on-supa.yml
+#  runs-on-supa:
+#    name: runs on supa
+#    needs: check
+##    if: ${{ contains( needs.check.outputs.output, 'SUPA' ) }}
+#    uses: ./.github/workflows/_runs-on-supa.yml
