@@ -51,7 +51,7 @@ jobs:
     runs-on: ${{ inputs.runner }}
     needs: build
     steps:
-      - - name: gen-test-data
+      - name: gen-test-data
         uses: wugeshui/DIOPI/.github/actions/code-build-test@main
         with:
           machine: ${{ inputs.machine }}
@@ -67,7 +67,7 @@ jobs:
           machine: ${{ inputs.machine }}
           build_env: ${{ inputs.build_env }}
           partition: ${{ inputs.partition }}
-          build_shell: "export LD_LIBRARY_PATH=\$LD_LIBRARY_PATH:${DEEPLINK_PATH}/${GITHUB_RUN_NUMBER}/${BUILD_TEST1}/impl/lib && cd diopi_test/python && python main.py --mode gen_case && python main.py --mode run_test"
+          build_shell: "export LD_LIBRARY_PATH=${pwd}/impl/lib:$LD_LIBRARY_PATH && cd diopi_test/python && python main.py --mode gen_case && python main.py --mode run_test"
           job_name: "build_test"
           cleaner: "clean_data"
           cover_job: "1"
