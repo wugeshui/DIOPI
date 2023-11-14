@@ -56,7 +56,7 @@ jobs:
 
   rt-test:
     runs-on: ${{ inputs.runner }}
-    needs: rt test
+    needs: build
     steps:
       - name: rt test on ascend
         uses: wugeshui/DIOPI/.github/actions/code-build-test@main
