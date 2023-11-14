@@ -37,7 +37,7 @@ jobs:
     runs-on: ${{ inputs.runner }}
     needs: checkout_code
     steps:
-      - name: build on camb
+      - name: build on a100
         uses: wugeshui/DIOPI/.github/actions/code-build-test@main
         with:
           machine: ${{ inputs.machine }}
@@ -61,7 +61,7 @@ jobs:
           job_name: "build_test"
           cleaner: "clean_data"
           cover_job: "1"
-      - name: op test on camb
+      - name: op test on a100
         uses: wugeshui/DIOPI/.github/actions/code-build-test@main
         with:
           machine: ${{ inputs.machine }}
