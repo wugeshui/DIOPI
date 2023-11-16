@@ -1,4 +1,4 @@
-name: runs on camb
+name: runs on ascend
 
 on:
   workflow_call:

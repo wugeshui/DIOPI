@@ -1,4 +1,4 @@
-name: runs on camb
+name: runs on a100
 
 on:
   workflow_call:

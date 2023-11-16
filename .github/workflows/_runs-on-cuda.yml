@@ -1,4 +1,4 @@
-name: runs on camb
+name: runs on cuda
 
 on:
   workflow_call:

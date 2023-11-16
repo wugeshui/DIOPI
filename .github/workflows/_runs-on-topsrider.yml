@@ -1,4 +1,4 @@
-name: runs on camb
+name: runs on topsrider
 
 on:
   workflow_call:
