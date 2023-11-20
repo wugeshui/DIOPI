@@ -30,7 +30,7 @@ jobs:
     runs-on: ${{ inputs.runner }}
     steps:
       - name: Checkout Code
-        uses: wugeshui/DIOPI/.github/actions/checkout-code@main
+        uses: wugeshui/DIOPI/.github/actions/checkout-code@wgs/add_test_ci
         with:
           machine: ${{ inputs.machine }}
   build:
@@ -38,7 +38,7 @@ jobs:
     needs: checkout_code
     steps:
       - name: build on a100
-        uses: wugeshui/DIOPI/.github/actions/code-build-test@main
+        uses: wugeshui/DIOPI/.github/actions/code-build-test@wgs/add_test_ci
         with:
           machine: ${{ inputs.machine }}
           build_env: ${{ inputs.build_env }}
@@ -52,7 +52,7 @@ jobs:
     needs: build
     steps:
       - name: gen-test-data
-        uses: wugeshui/DIOPI/.github/actions/code-build-test@main
+        uses: wugeshui/DIOPI/.github/actions/code-build-test@wgs/add_test_ci
         with:
           machine: ${{ inputs.machine }}
           build_env: ${{ inputs.build_env }}
@@ -62,7 +62,7 @@ jobs:
           cleaner: "clean_data"
           cover_job: "1"
       - name: op test on a100
-        uses: wugeshui/DIOPI/.github/actions/code-build-test@main
+        uses: wugeshui/DIOPI/.github/actions/code-build-test@wgs/add_test_ci
         with:
           machine: ${{ inputs.machine }}
           build_env: ${{ inputs.build_env }}
