@@ -28,7 +28,7 @@ jobs:
       output: ${{ steps.set-run-vars.outputs.RUN_RESULT }}
     steps:
       - name: Checkout Code
-        uses: wugeshui/DIOPI/.github/actions/checkout-code@main
+        uses: wugeshui/DIOPI/.github/actions/checkout-code@wgs/add_test_ci
         with:
           machine: "SH1988"
 
@@ -43,7 +43,7 @@ jobs:
           echo "RUN_RESULT=$RUN_RESULT" >> "$GITHUB_OUTPUT"
 
       - name: lint
-        uses: wugeshui/DIOPI/.github/actions/code-build-test@main
+        uses: wugeshui/DIOPI/.github/actions/code-build-test@wgs/add_test_ci
         with:
           machine: "SH1988"
           build_env: "/mnt/cache/share/platform/env/pt2.0_diopi"
