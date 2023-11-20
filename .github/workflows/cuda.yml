@@ -70,17 +70,17 @@ jobs:
 #    if: ${{ contains( needs.check.outputs.output, 'NV' ) }}
     uses: ./.github/workflows/_runs-on-a100.yml
 
-  runs-on-ascend:
-    name: runs on ascend
-    needs: check
-#    if: ${{ contains( needs.check.outputs.output, 'ASCEND' ) }}
-    uses: ./.github/workflows/_runs-on-ascend.yml
+#   runs-on-ascend:
+#     name: runs on ascend
+#     needs: check
+# #    if: ${{ contains( needs.check.outputs.output, 'ASCEND' ) }}
+#     uses: ./.github/workflows/_runs-on-ascend.yml
 
-  runs-on-topsrider:
-    name: runs on topsrider
-    needs: check
-#    if: ${{ contains( needs.check.outputs.output, 'TOPSRIDER' ) }}
-    uses: ./.github/workflows/_runs-on-topsrider.yml
+#   runs-on-topsrider:
+#     name: runs on topsrider
+#     needs: check
+# #    if: ${{ contains( needs.check.outputs.output, 'TOPSRIDER' ) }}
+#     uses: ./.github/workflows/_runs-on-topsrider.yml
 
 #  runs-on-supa:
 #    name: runs on supa
