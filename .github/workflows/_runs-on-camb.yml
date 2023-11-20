@@ -30,7 +30,7 @@ jobs:
     runs-on: ${{ inputs.runner }}
     steps:
       - name: Checkout Code
-        uses: wugeshui/DIOPI/.github/actions/checkout-code@main
+        uses: wugeshui/DIOPI/.github/actions/checkout-code@wgs/add_test_ci
         with:
           machine: ${{ inputs.machine }}
   build:
@@ -38,7 +38,7 @@ jobs:
     needs: checkout_code
     steps:
       - name: build on camb
-        uses: wugeshui/DIOPI/.github/actions/code-build-test@main
+        uses: wugeshui/DIOPI/.github/actions/code-build-test@wgs/add_test_ci
         with:
           machine: ${{ inputs.machine }}
           build_env: ${{ inputs.build_env }}
@@ -47,7 +47,7 @@ jobs:
           job_name: "build_test"
           cleaner: "clean_all_if_error"
       - name: clang-tidy
-        uses: wugeshui/DIOPI/.github/actions/code-build-test@main
+        uses: wugeshui/DIOPI/.github/actions/code-build-test@wgs/add_test_ci
         with:
           machine: ${{ inputs.machine }}
           build_env: ${{ inputs.build_env }}
@@ -74,14 +74,14 @@ jobs:
 #          cover_job: "1"
       - name: all coverage check
         if: ${{ (contains( github.ref, 'main') || startsWith(github.ref, 'refs/heads/v') || startsWith(github.ref, 'refs/heads/dev')) }}
-        uses: wugeshui/DIOPI/.github/actions/coverage@main
+        uses: wugeshui/DIOPI/.github/actions/coverage@wgs/add_test_ci
         with:
           machine: ${{ inputs.machine }}
           build_env: ${{ inputs.build_env }}
           coverage_type: "all"
       - name: increment coverage check
         if: ${{ contains( github.event_name, 'pull_request' ) && contains( github.base_ref, 'main' ) }}
-        uses: wugeshui/DIOPI/.github/actions/coverage@main
+        uses: wugeshui/DIOPI/.github/actions/coverage@wgs/add_test_ci
         with:
           machine: ${{ inputs.machine }}
           build_env: ${{ inputs.build_env }}
