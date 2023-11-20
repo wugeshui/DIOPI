@@ -3,7 +3,7 @@ on:
   workflow_dispatch:
   push:
     branches:
-      - dev_v0.25
+      - "wgs/**"
       - main
   pull_request:
     paths-ignore:
