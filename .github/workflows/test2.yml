@@ -13,6 +13,6 @@ jobs:
     name: job2
     runs-on: tps-diopi-ci
     steps:
-      name: job2
-      run:
-        echo "job2"
+      - name: job2
+        run:
+          echo "job2"

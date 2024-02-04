@@ -10,9 +10,9 @@ jobs:
     name: job1
     runs-on: tps-diopi-ci
     steps:
-      name: job1
-      run:
-        echo "job1"
+      - name: job1
+        run:
+          echo "job1"
 
   job2:
     name: job2
